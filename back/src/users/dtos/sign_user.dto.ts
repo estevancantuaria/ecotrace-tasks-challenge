@@ -1,27 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { SIGN_IN_DTO_API } from '../constants/dto_swagger_annotations';
 
 
 export class signInDto {
 
     @ApiProperty({
-        description: 'E-mail do usuário',
-        example: 'usuario@example.com',
-        format: 'email',
-        minLength: 3,
+        ...SIGN_IN_DTO_API.EMAIL,
     })
-    @IsString()
-    @IsNotEmpty({ message: "O campo senha não pode ser vazio" })
-    @IsEmail({}, { message: "O formato do e-mail está inválido" })
+    @IsString() 
+    @IsNotEmpty({ message: SIGN_IN_DTO_API.EMAIL.message })
+    @IsEmail({}, { message: SIGN_IN_DTO_API.EMAIL.message })
     email: string;
 
     @ApiProperty({
-        description: 'Senha do usuário',
-        example: 'Senha123',
-        format: 'string',
+        ...SIGN_IN_DTO_API.PASSWORD,
     })
     @IsString()
-    @IsNotEmpty({ message: "O campo senha não pode ser vazio" })
-    @IsNotEmpty()
+    @IsNotEmpty({ message: SIGN_IN_DTO_API.PASSWORD.message })
     password: string;
 }

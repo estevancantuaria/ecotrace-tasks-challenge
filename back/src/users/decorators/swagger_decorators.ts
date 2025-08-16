@@ -2,6 +2,7 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '../../drivers/auth_guard';
+import { USER_ID_PARAM_ANNOTATIONS } from '../constants/decorators_swagger_annotations';
 
 export function AuthenticatedOperation(summary: string) {
   return applyDecorators(
@@ -13,20 +14,10 @@ export function AuthenticatedOperation(summary: string) {
 
 export function TaskIdParam() {
   return ApiParam({
-    name: 'id',
-    description: 'UUID do usuário no banco de dados',
-    type: 'string',
-    format: 'uuid',
-    example: '123e4567-e89b-12d3-a456-426614174000'
+    ...USER_ID_PARAM_ANNOTATIONS.ID,
   });
 }
 
-export function CustomApiParam(name: string, description: string, type: string, format: string, example: any) {
-  return ApiParam({
-    name,
-    description,
-    type,
-    format,
-    example
-  });
+export function ApiOperationCustom(summary: string) {
+  return ApiOperation({ summary });
 }

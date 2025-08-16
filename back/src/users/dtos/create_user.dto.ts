@@ -1,40 +1,34 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { CREATE_USER_DTO_API } from '../constants/dto_swagger_annotations';
 
 
 export class CreateUserDto {
 
     @ApiProperty({
-        description: 'E-mail do usuário',
-        example: 'usuario@example.com',
-        format: 'email',
-        minLength: 3,
+        ...CREATE_USER_DTO_API.EMAIL,
     })
     @IsString()
-    @IsEmail({}, { message: "O formato do e-mail está inválido" })
+    @IsEmail({}, { message: CREATE_USER_DTO_API.EMAIL.message })
     email: string;
 
     @ApiProperty({
-        description: 'Senha do usuário',
-        example: 'Senha123',
-        format: 'string',
+        ...CREATE_USER_DTO_API.PASSWORD,
     })
     @IsString()
-    @MinLength(6, { message: "A senha precisa ter pelo menos 6 caracteres" })
-    @MaxLength(50, { message: "A senha pode ter no máximo 50 caracteres" })
+    @MinLength(CREATE_USER_DTO_API.PASSWORD.minLength, { message: CREATE_USER_DTO_API.PASSWORD.minlengthMessage })
+    @MaxLength(CREATE_USER_DTO_API.PASSWORD.maxLength, { message: CREATE_USER_DTO_API.PASSWORD.maxlengthMessage })
     @Matches(
-        /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-        message: 'A senha precisa ter pelo menos uma letra maiúscula, uma letra minúscula e um número'
+        CREATE_USER_DTO_API.PASSWORD.matches, {
+        message: CREATE_USER_DTO_API.PASSWORD.message
     })
     password: string;
 
     @ApiProperty({
-        description: 'Nome do usuário',
-        example: 'João da Silva',
-        format: 'string',
+        ...CREATE_USER_DTO_API.NAME,
     })
     @IsString()
-    @MinLength(1, { message: "O nome precisa ter pelo menos uma letra" })
+    @MinLength(CREATE_USER_DTO_API.NAME.minLength, { message: CREATE_USER_DTO_API.NAME.message })
     name: string;
 
 }

@@ -14,32 +14,39 @@ import { UpdateTaskDto } from './dtos/update_task.dto';
 import { TaskPaginationDto } from './dtos/task_pagination.dto';
 import { TaskResponseDto } from './dtos/response_task.dto';
 import { AuthenticatedOperation, TaskIdParam } from './decorators/swagger_decorators';
+import { 
+  CREATE_TASK_ANNOTATION, 
+  DELETE_TASK_ANNOTATION, 
+  FIND_ALL_ANNOTATION, 
+  FIND_BY_ID_ANNOTATION, 
+  UPDATE_TASK_ANNOTATION 
+} from './constants/decorators_swagger_annotations';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
   @Post()
-  @AuthenticatedOperation('Criar uma nova tarefa')
+  @AuthenticatedOperation(CREATE_TASK_ANNOTATION)
   createTask(@Body() createTaskDto: CreateTaskDto): Promise<TaskResponseDto> {
     return this.tasksService.create(createTaskDto);
   }
 
   @Get()
-  @AuthenticatedOperation('Listar todas as tarefas')
+  @AuthenticatedOperation(FIND_ALL_ANNOTATION)
   findAll(@Query() taskPaginationDto: TaskPaginationDto): Promise<TaskResponseDto[]> {
     return this.tasksService.findAll(taskPaginationDto);
   }
 
   @Get(':id')
-  @AuthenticatedOperation('Buscar tarefa por ID')
+  @AuthenticatedOperation(FIND_BY_ID_ANNOTATION)
   @TaskIdParam()
   findById(@Param('id') id: string): Promise<TaskResponseDto> {
     return this.tasksService.findById(id);
   }
 
   @Put(':id/status')
-  @AuthenticatedOperation('Atualizar status da tarefa')
+  @AuthenticatedOperation(UPDATE_TASK_ANNOTATION)
   @TaskIdParam()
   updateStatus(
     @Param('id') id: string,
@@ -49,7 +56,7 @@ export class TasksController {
   }
 
   @Put(':id')
-  @AuthenticatedOperation('Atualizar tarefa')
+  @AuthenticatedOperation(UPDATE_TASK_ANNOTATION)
   @TaskIdParam()
   updateTask(
     @Param('id') id: string,
@@ -59,7 +66,7 @@ export class TasksController {
   }
 
   @Delete(':id')
-  @AuthenticatedOperation('Deletar tarefa')
+  @AuthenticatedOperation(DELETE_TASK_ANNOTATION)
   @TaskIdParam()
   deleteTask(@Param('id') id: string): Promise<{ message: string }> {
     return this.tasksService.delete(id);

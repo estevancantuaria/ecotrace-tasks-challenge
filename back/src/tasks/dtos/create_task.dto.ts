@@ -23,6 +23,7 @@ export class CreateTaskDto {
   @ApiPropertyOptional({
     description: 'Descrição detalhada da tarefa',
     example: 'Finalizar todas as funcionalidades do sistema de tarefas',
+    required: false,
   })
   @IsString()
   @IsOptional()

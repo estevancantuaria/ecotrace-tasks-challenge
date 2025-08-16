@@ -7,7 +7,7 @@ export const tasksRepositoryMock = {
   useValue: {
     find: jest.fn().mockImplementation(({ where }) => {
         if (where && where.completed !== undefined) {
-          return Promise.resolve(taskEntityList.filter(task => task.completed === true));
+          return Promise.resolve(taskEntityList.filter(task => task.completed === where.completed));
         }
         return Promise.resolve(taskEntityList);
       }),

@@ -37,6 +37,11 @@ describe('TasksRepository', () => {
       expect(result).toEqual(taskEntityList.filter(task => task.completed === true));
     });
 
+    test('should return all tasks with status false', async () => {
+      const result = await tasksRepository.findAll(10, 0, false);
+      expect(result).toEqual(taskEntityList.filter(task => task.completed === false));
+    });
+
   });
 
   describe('findById', () => {

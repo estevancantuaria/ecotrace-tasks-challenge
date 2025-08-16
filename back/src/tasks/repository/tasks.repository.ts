@@ -17,7 +17,7 @@ export class TasksRepository implements ITasksRepository {
 
   async findAll(limit: number, offset: number, status?: boolean): Promise<Task[]> {
     try {
-      const statusFilter = status ? { completed: status } : {};
+      const statusFilter = status !== undefined ? { completed: status } : {};
 
       const result = await this.repo.find({
         take: limit,

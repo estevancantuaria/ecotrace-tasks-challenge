@@ -25,7 +25,7 @@ export class TaskPaginationDto {
 
   @IsOptional()
   @IsBoolean()
-  @Transform(({ value }) => value === 'true' || value === true)
+  @Transform(({ value }) => value === undefined ? undefined : (value === 'true' || value === true))
   @ApiProperty({
     description: 'Filtro de status',
     example: true

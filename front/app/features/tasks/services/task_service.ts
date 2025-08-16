@@ -33,9 +33,10 @@ export interface UpdateTaskData {
 }
 
 export const tasksService = {
-  async getTasks(): Promise<Task[]> {
+  async getTasks(status?: boolean): Promise<Task[]> {
     try {
-      const tasks = await apiClient.get<Task[]>('/tasks');
+      const query = status !== undefined ? `?status=${status}` : '';
+      const tasks = await apiClient.get<Task[]>(`/tasks${query}`);
       return tasks;
     } catch (error) {
       throw new Error(ERROR_MESSAGES.LOAD_TASKS);

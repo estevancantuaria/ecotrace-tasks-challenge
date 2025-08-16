@@ -7,11 +7,11 @@ export function useTasks() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadTasksAndUsers = async () => {
+  const loadTasksAndUsers = async (status?: boolean) => {
     try {
       setLoading(true);
       const [tasksData, usersData] = await Promise.all([
-        tasksService.getTasks(),
+        tasksService.getTasks(status),
         tasksService.getUsers(),
       ]);
 

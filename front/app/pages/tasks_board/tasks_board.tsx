@@ -7,7 +7,11 @@ import {
   AppBar,
   Toolbar,
   Alert,
-  CircularProgress
+  CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useAuth } from '../../hooks/use_auth';
@@ -19,13 +23,14 @@ import { ERROR_MESSAGES } from '../../features/tasks/constants/error_messages';
 
 export default function TasksBoard() {
   const { logout } = useAuth();
-  const { tasks, setTasks, users, loading } = useTasks();
+  const { tasks, setTasks, users, loading, loadTasksAndUsers } = useTasks();
 
   const [openModal, setOpenModal] = useState(false);
   const [modalType, setModalType] = useState<'add' | 'edit'>('add');
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [alertMessage, setAlertMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'completed'>('all');
 
   const showAlertMessage = (message: string) => {
     setAlertMessage(message);
@@ -43,16 +48,33 @@ export default function TasksBoard() {
     setSelectedTask(null);
   };
 
-  const handleTaskSaved = (task: Task, type: 'add' | 'edit') => {
-    if (type === 'add') {
+  const saveActions = {
+    add: (task: Task) => {
       setTasks([...tasks, task]);
       showAlertMessage('Tarefa criada com sucesso!');
-    } else {
+    },
+    edit: (task: Task) => {
       setTasks(tasks.map(t => (t.id === task.id ? task : t)));
       showAlertMessage('Tarefa atualizada com sucesso!');
-    }
+    },
+  };
+
+  const filterActions = {
+    all: () => loadTasksAndUsers(),
+    open: () => loadTasksAndUsers(false),
+    completed: () => loadTasksAndUsers(true),
+  };
+
+  const handleTaskSaved = (task: Task, type: 'add' | 'edit') => {
+    saveActions[type](task);
     handleCloseModal();
   };
+  
+  const handleChangeFilter = async (value: 'all' | 'open' | 'completed') => {
+    setStatusFilter(value);
+    filterActions[value]();
+  };
+
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Deseja deletar esta tarefa?')) {
@@ -81,13 +103,28 @@ export default function TasksBoard() {
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography variant="h4">Gerenciar Tarefas</Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => handleOpenModal('add')}
-          >
-            Adicionar Tarefa
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <FormControl size="medium" sx={{ minWidth: 150 }}>
+              <InputLabel id="status-filter-label">Filtrar por</InputLabel>
+              <Select
+                labelId="status-filter-label"
+                value={statusFilter}
+                onChange={(e) => handleChangeFilter(e.target.value as 'all' | 'open' | 'completed')}
+              >
+                <MenuItem value="all">Todas</MenuItem>
+                <MenuItem value="open">Abertas</MenuItem>
+                <MenuItem value="completed">Concluídas</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => handleOpenModal('add')}
+            >
+              Adicionar Tarefa
+            </Button>
+          </Box>
         </Box>
 
         {loading ? (

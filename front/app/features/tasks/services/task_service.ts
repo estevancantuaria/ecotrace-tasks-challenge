@@ -33,11 +33,21 @@ export interface UpdateTaskData {
 }
 
 export const tasksService = {
-  async getTasks(status?: boolean): Promise<Task[]> {
+  async getTasks(
+    status?: boolean,
+    limit = 10,
+    offset = 0
+  ): Promise<{ tasks: Task[]; total: number }> {
     try {
-      const query = status !== undefined ? `?status=${status}` : '';
-      const tasks = await apiClient.get<Task[]>(`/tasks${query}`);
-      return tasks;
+      const queryParams = new URLSearchParams();
+      if (status !== undefined) queryParams.append('status', String(status));
+      queryParams.append('limit', String(limit));
+      queryParams.append('offset', String(offset));
+
+      const response = await apiClient.get<{ tasks: Task[]; total: number }>(
+        `/tasks?${queryParams.toString()}`
+      );
+      return response;
     } catch (error) {
       throw new Error(ERROR_MESSAGES.LOAD_TASKS);
     }
@@ -47,7 +57,7 @@ export const tasksService = {
     try {
       const task = await apiClient.post<Task>('/tasks', taskData);
       return task;
-    } catch (error) {
+    } catch {
       throw new Error(ERROR_MESSAGES.CREATE_TASK);
     }
   },
@@ -56,16 +66,18 @@ export const tasksService = {
     try {
       const task = await apiClient.put<Task>(`/tasks/${taskId}`, taskData);
       return task;
-    } catch (error) {
+    } catch {
       throw new Error(ERROR_MESSAGES.UPDATE_TASK);
     }
   },
 
   async deleteTask(taskId: string): Promise<{ message: string }> {
     try {
-      const response = await apiClient.delete<{ message: string }>(`/tasks/${taskId}`);
+      const response = await apiClient.delete<{ message: string }>(
+        `/tasks/${taskId}`
+      );
       return response;
-    } catch (error) {
+    } catch {
       throw new Error(ERROR_MESSAGES.DELETE_TASK);
     }
   },
@@ -74,7 +86,7 @@ export const tasksService = {
     try {
       const user = await apiClient.get<User>(`/users/${userId}`);
       return user;
-    } catch (error) {
+    } catch {
       throw new Error(ERROR_MESSAGES.LOAD_USERS);
     }
   },
@@ -83,7 +95,7 @@ export const tasksService = {
     try {
       const users = await apiClient.get<User[]>('/users');
       return users;
-    } catch (error) {
+    } catch {
       throw new Error(ERROR_MESSAGES.LOAD_USERS);
     }
   },

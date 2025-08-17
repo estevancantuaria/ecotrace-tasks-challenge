@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Container,
   Paper,
@@ -12,13 +12,32 @@ import { useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../../hooks/use_auth';
 import { ERROR_MESSAGES } from '../../features/users/constants/error_messages';
 
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { loginSchema } from '../../features/users/validators/login_form_schema';
+
+interface LoginFormInputs {
+  email: string;
+  password: string;
+}
+
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const { login, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [error, setError] = useState('');
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormInputs>({
+    resolver: yupResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -26,19 +45,10 @@ export default function Login() {
     }
   }, [isAuthenticated, navigate, location]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    
-    event.preventDefault();
-    
+  const onSubmit = async (data: LoginFormInputs) => {
     setError('');
-
-    if (!email || !password) {
-      setError(ERROR_MESSAGES.EMPTY_FIELDS);
-      return;
-    }
-
     try {
-      await login(email, password);
+      await login(data.email, data.password);
       navigate('/tasksBoard', { replace: true });
     } catch (err) {
       setError(ERROR_MESSAGES.LOGIN_ERROR);
@@ -80,33 +90,47 @@ export default function Login() {
             </Alert>
           )}
 
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
+          <Box
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{ mt: 1, width: '100%' }}
+          >
+            <Controller
               name="email"
-              autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  fullWidth
+                  label="Email"
+                  autoComplete="email"
+                  autoFocus
+                  disabled={isLoading}
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                />
+              )}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+
+            <Controller
               name="password"
-              label="Senha"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  fullWidth
+                  type="password"
+                  label="Senha"
+                  autoComplete="current-password"
+                  disabled={isLoading}
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                />
+              )}
             />
+
             <Button
               type="submit"
               fullWidth

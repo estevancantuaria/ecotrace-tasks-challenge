@@ -15,11 +15,11 @@ export class TasksRepository implements ITasksRepository {
 
   ) { }
 
-  async findAll(limit: number, offset: number, status?: boolean): Promise<Task[]> {
+  async findAll(limit: number, offset: number, status?: boolean): Promise<[Task[], number]> {
     try {
       const statusFilter = status !== undefined ? { completed: status } : {};
 
-      const result = await this.repo.find({
+      const result = await this.repo.findAndCount({
         take: limit,
         skip: offset,
         order: {
@@ -36,7 +36,7 @@ export class TasksRepository implements ITasksRepository {
 
       return result;
     } catch (error) {
-      throw new InternalServerErrorException(ERROR_MESSAGES.TASK.LIST_ERROR);
+      throw new InternalServerErrorException(error);
     }
   }
 

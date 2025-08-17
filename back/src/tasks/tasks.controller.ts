@@ -34,7 +34,7 @@ export class TasksController {
 
   @Get()
   @AuthenticatedOperation(FIND_ALL_ANNOTATION)
-  findAll(@Query() taskPaginationDto: TaskPaginationDto): Promise<TaskResponseDto[]> {
+  findAll(@Query() taskPaginationDto: TaskPaginationDto): Promise<{ tasks: TaskResponseDto[], total: number }> {
     return this.tasksService.findAll(taskPaginationDto);
   }
 

@@ -4,6 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Task } from '../entities/tasks.entity';
 import { tasksRepositoryMock } from './mocks/repository/task.repository.mock';
 import { taskEntityList } from './mocks/repository/tasks_entity_list.repository.mock';
+import { taskMock } from './mocks/repository/task_mock.repository.mock';
 
 describe('TasksRepository', () => {
   let tasksRepository: TasksRepository;
@@ -34,12 +35,12 @@ describe('TasksRepository', () => {
 
     test('should return all tasks with status true', async () => {
       const result = await tasksRepository.findAll(10, 0, true);
-      expect(result).toEqual(taskEntityList.filter(task => task.completed === true));
+      expect(result).toEqual([taskEntityList[0].filter(task => task.completed === true), 1]);
     });
 
     test('should return all tasks with status false', async () => {
       const result = await tasksRepository.findAll(10, 0, false);
-      expect(result).toEqual(taskEntityList.filter(task => task.completed === false));
+      expect(result).toEqual([taskEntityList[0].filter(task => task.completed === false), taskEntityList[0].filter(task => task.completed === false).length]);
     });
 
   });
@@ -47,7 +48,7 @@ describe('TasksRepository', () => {
   describe('findById', () => {
     test('should return a task by ID', async () => {
       const result = await tasksRepository.findById('123e4567-e89b-12d3-a456-426614174000');
-      expect(result).toEqual(taskEntityList[0]);
+      expect(result).toEqual(taskEntityList[0][0]);
     });
 
   });
@@ -61,7 +62,7 @@ describe('TasksRepository', () => {
         user_id: '123e4567-e89b-12d3-a456-426614174000',
       };
       const result = await tasksRepository.create(newTask);
-      expect(result).toEqual(taskEntityList[0]);
+      expect(result).toEqual(taskMock);
     });
   });
 
@@ -75,9 +76,8 @@ describe('TasksRepository', () => {
         user_id: '123e4567-e89b-12d3-a456-426614174000',
       };
       const result = await tasksRepository.update('123e4567-e89b-12d3-a456-426614174000', updatedTask);
-      expect(result).toEqual(taskEntityList[0]);
+      expect(result).toEqual(taskMock);
     });
-
   });
 
   describe('delete', () => {
@@ -91,7 +91,7 @@ describe('TasksRepository', () => {
   describe('updateStatus', () => {
     test('should update the status of a task', async () => {
       const result = await tasksRepository.updateStatus('123e4567-e89b-12d3-a456-426614174000', true);
-      expect(result).toEqual(taskEntityList[0]);
+      expect(result).toEqual(taskMock);
     });
   });
 }); 

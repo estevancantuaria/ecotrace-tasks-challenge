@@ -14,10 +14,10 @@ export const tasksRepositoryMock = {
     }),
     
     findAll: jest.fn().mockImplementation((limit:number, offset:number, status?:boolean) => {
-      if (status !== undefined) {
-        return Promise.resolve(tasksEntityListServiceMock.filter(task => task.completed === status));
+      if(status !== undefined) {
+        return Promise.resolve([tasksEntityListServiceMock.filter(task => task.completed === status), tasksEntityListServiceMock.filter(task => task.completed === status).length]);
       }
-      return Promise.resolve(tasksEntityListServiceMock);
+      return Promise.resolve([tasksEntityListServiceMock, tasksEntityListServiceMock.length]);
     }),
 
     findById: jest.fn().mockImplementation((id: string) => {

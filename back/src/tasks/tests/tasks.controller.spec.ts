@@ -63,13 +63,13 @@ describe('TasksController', () => {
 
   describe('findAll', () => {
     it('should return all tasks', async () => {
-      const result: TaskResponseDto[] = await controller.findAll({ limit: 10, offset: 0 });
-      expect(result).toEqual(tasksEntityListControllerMock);
+      const result: { tasks: TaskResponseDto[], total: number } = await controller.findAll({ limit: 10, offset: 0 });
+      expect(result).toEqual({ tasks: tasksEntityListControllerMock, total: tasksEntityListControllerMock.length });
     });
 
     it('should return all tasks with status true', async () => {
-      const result: TaskResponseDto[] = await controller.findAll({ limit: 10, offset: 0, status: true });
-      expect(result).toEqual(tasksEntityListControllerMock.filter(task => task.completed === true));
+      const result: { tasks: TaskResponseDto[], total: number } = await controller.findAll({ limit: 10, offset: 0, status: true });
+      expect(result).toEqual({ tasks: tasksEntityListControllerMock.filter(task => task.completed === true), total: tasksEntityListControllerMock.filter(task => task.completed === true).length });
     });
   });
 

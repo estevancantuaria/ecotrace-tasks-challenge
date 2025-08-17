@@ -70,20 +70,20 @@ describe('TasksService', () => {
 
   describe('findAll', () => {
     it('should return all tasks', async () => {
-      const result: TaskResponseDto[] = await service.findAll({ limit: 10, offset: 0 } as TaskPaginationDto);
+      const result: { tasks: TaskResponseDto[], total: number } = await service.findAll({ limit: 10, offset: 0 } as TaskPaginationDto);
       expect(result).toEqual(taskResponseDtoServiceMock);
     });
 
     it('should return all tasks with status true', async () => {
-      const result: TaskResponseDto[] = await service.findAll({ limit: 10, offset: 0, status: true } as TaskPaginationDto);
-      expect(result).toEqual(taskResponseDtoServiceMock.filter(task => task.completed === true));
+      const result: { tasks: TaskResponseDto[], total: number } = await service.findAll({ limit: 10, offset: 0, status: true } as TaskPaginationDto);
+      expect(result).toEqual({ tasks: taskResponseDtoServiceMock.tasks.filter(task => task.completed === true), total: taskResponseDtoServiceMock.tasks.filter(task => task.completed === true).length });
     });
   });
 
   describe('findById', () => {
     it('should return a task by ID', async () => {
       const result: TaskResponseDto = await service.findById('123e4567-e89b-12d3-a456-426614174000');
-      expect(result).toEqual(taskResponseDtoServiceMock[0]);
+      expect(result).toEqual(taskResponseDtoServiceMock.tasks[0]);
     });
 
     it('should throw an error if the task is not found', async () => {
@@ -94,7 +94,7 @@ describe('TasksService', () => {
   describe('markStatus', () => {
     it('should mark a task as completed', async () => {
       const result: TaskResponseDto = await service.markStatus('123e4567-e89b-12d3-a456-426614174000', true);
-      expect(result).toEqual(taskResponseDtoServiceMock[0]);
+      expect(result).toEqual(taskResponseDtoServiceMock.tasks[0]);
     });
 
     it('should throw an error if the task is not found', async () => {
@@ -105,7 +105,7 @@ describe('TasksService', () => {
   describe('update', () => {
     it('should update a task', async () => {
       const result: TaskResponseDto = await service.update('123e4567-e89b-12d3-a456-426614174000', { title: 'Updated Task' });
-      expect(result).toEqual(taskResponseDtoServiceMock[0]);
+      expect(result).toEqual(taskResponseDtoServiceMock.tasks[0]);
     });
 
     it('should throw an error if the task is not found', async () => {

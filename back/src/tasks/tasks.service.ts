@@ -51,22 +51,26 @@ export class TasksService {
     }
   }
 
-  async findAll(paginationDto: TaskPaginationDto): Promise<TaskResponseDto[]> {
+  async findAll(paginationDto: TaskPaginationDto): Promise<{ tasks: TaskResponseDto[], total: number }> {
     try {
       const { limit = 10, offset = 0, status } = paginationDto;
 
-      const tasks = await this.tasksRepository.findAll(limit, offset, status);
+      const [tasks, total] = await this.tasksRepository.findAll(limit, offset, status);
 
-      return tasks.map(task => ({
+      return {
+        tasks: tasks.map(task => ({
         id: task.id,
         title: task.title,
         description: task.description,
         completed: task.completed,
         createdAt: task.createdAt,
         userName: task.user.name,
-      }));
+      })),
+      total,
+    };
     } catch (error) {
       if (error instanceof InternalServerErrorException) throw error;
+      console.log(error);
       throw new InternalServerErrorException(ERROR_MESSAGES.TASK.LIST_ERROR);
     }
   }

@@ -9,7 +9,7 @@ export const tasksServiceControllerMock = {
     if (status !== undefined) {
       tasks = tasks.filter(task => task.completed === status);
     }
-    return Promise.resolve(tasks);
+    return Promise.resolve({ tasks, total: tasks.length });
   }),
   findById: jest.fn().mockResolvedValue(taskResponseDtoControllerMock),
   markStatus: jest.fn().mockResolvedValue(taskResponseDtoControllerMock),

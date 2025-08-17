@@ -5,9 +5,9 @@ import { UpdateUserDto } from './dtos/update_user.dto';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { signInDto } from './dtos/sign_user.dto';
 import { BcryptDriver } from '../drivers/bcrypt_driver';
-import { AuthGuard } from '../drivers/auth_guard';
 import { ERROR_MESSAGES } from '../common/errors/errors_messages';
 import { UserResponseDto } from './dtos/user_response.dto';
+import type { IAuthGuard } from '../drivers/interfaces/auth_guard_interface';
 
 @Injectable()
 export class UsersService {
@@ -15,7 +15,8 @@ export class UsersService {
   constructor(
     @Inject('IUserRepository')
     private readonly usersRepository: IUserRepository,
-    private authGuard: AuthGuard,
+    @Inject('IAuthGuard')
+    private authGuard: IAuthGuard,
     private bcryptDriver: BcryptDriver
   ) { }
 

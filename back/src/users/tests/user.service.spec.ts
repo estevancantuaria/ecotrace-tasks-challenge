@@ -2,14 +2,14 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { UsersService } from "../users.service";
 import { UnauthorizedException } from "@nestjs/common";
 import { usersRepositoryServiceMock } from "./mocks/service/users_repository.service";
-import { AuthGuard } from "../../drivers/auth_guard";
 import { BcryptDriver } from "../../drivers/bcrypt_driver";
+import type { IAuthGuard } from "../../drivers/interfaces/auth_guard_interface";
 
 describe("UsersService - signIn", () => {
   let usersService: UsersService;
   let usersRepository: typeof usersRepositoryServiceMock;
   let bcryptDriver: BcryptDriver;
-  let authGuard: AuthGuard;
+  let authGuard: IAuthGuard;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -22,8 +22,8 @@ describe("UsersService - signIn", () => {
           },
         },
         {
-          provide: AuthGuard,
-          useValue: { sign: jest.fn() },
+          provide: 'IAuthGuard',
+          useValue: { sign: jest.fn(), canActivate: jest.fn() },
         },
         {
           provide: BcryptDriver,
@@ -35,7 +35,7 @@ describe("UsersService - signIn", () => {
     usersService = module.get<UsersService>(UsersService);
     usersRepository = module.get("IUserRepository");
     bcryptDriver = module.get<BcryptDriver>(BcryptDriver);
-    authGuard = module.get<AuthGuard>(AuthGuard);
+    authGuard = module.get<IAuthGuard>('IAuthGuard');
   });
 
   it("should return the token and user data when credentials are correct", async () => {

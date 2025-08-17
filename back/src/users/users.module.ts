@@ -18,7 +18,10 @@ import { BcryptDriver } from '../drivers/bcrypt_driver';
       provide: 'IUserRepository',
       useClass: UsersRepository,
     },
-    AuthGuard,
+    {
+      provide: 'IAuthGuard',
+      useClass: AuthGuard,
+    },
     BcryptDriver,
   ],
 })

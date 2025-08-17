@@ -2,13 +2,13 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { UsersService } from "../users.service";
 import { UnauthorizedException } from "@nestjs/common";
 import { usersRepositoryServiceMock } from "./mocks/service/users_repository.service";
-import { BcryptDriver } from "../../drivers/bcrypt_driver";
 import type { IAuthGuard } from "../../drivers/interfaces/auth_guard_interface";
+import type { IHashService } from "../../drivers/interfaces/hash_service_interface";
 
 describe("UsersService - signIn", () => {
   let usersService: UsersService;
   let usersRepository: typeof usersRepositoryServiceMock;
-  let bcryptDriver: BcryptDriver;
+  let bcryptDriver: IHashService;
   let authGuard: IAuthGuard;
 
   beforeEach(async () => {
@@ -17,7 +17,7 @@ describe("UsersService - signIn", () => {
         UsersService,
         {
           provide: "IUserRepository",
-          useValue: {
+          useValue: {   
             findByEmail: jest.fn(),
           },
         },
@@ -26,7 +26,7 @@ describe("UsersService - signIn", () => {
           useValue: { sign: jest.fn(), canActivate: jest.fn() },
         },
         {
-          provide: BcryptDriver,
+          provide: 'IHashService',
           useValue: { compare: jest.fn(), hash: jest.fn() },
         },
       ],
@@ -34,7 +34,7 @@ describe("UsersService - signIn", () => {
 
     usersService = module.get<UsersService>(UsersService);
     usersRepository = module.get("IUserRepository");
-    bcryptDriver = module.get<BcryptDriver>(BcryptDriver);
+    bcryptDriver = module.get<IHashService>('IHashService');
     authGuard = module.get<IAuthGuard>('IAuthGuard');
   });
 

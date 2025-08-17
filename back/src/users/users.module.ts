@@ -22,7 +22,10 @@ import { BcryptDriver } from '../drivers/bcrypt_driver';
       provide: 'IAuthGuard',
       useClass: AuthGuard,
     },
-    BcryptDriver,
+    {
+      provide: 'IHashService',
+      useClass: BcryptDriver,
+    },
   ],
 })
 export class UsersModule { }

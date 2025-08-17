@@ -4,7 +4,7 @@ import { CreateUserDto } from './dtos/create_user.dto';
 import { UpdateUserDto } from './dtos/update_user.dto';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { signInDto } from './dtos/sign_user.dto';
-import { BcryptDriver } from '../drivers/bcrypt_driver';
+import type { IHashService } from '../drivers/interfaces/hash_service_interface';
 import { ERROR_MESSAGES } from '../common/errors/errors_messages';
 import { UserResponseDto } from './dtos/user_response.dto';
 import type { IAuthGuard } from '../drivers/interfaces/auth_guard_interface';
@@ -17,7 +17,8 @@ export class UsersService {
     private readonly usersRepository: IUserRepository,
     @Inject('IAuthGuard')
     private authGuard: IAuthGuard,
-    private bcryptDriver: BcryptDriver
+    @Inject('IHashService')
+    private bcryptDriver: IHashService
   ) { }
 
   async create(dto: CreateUserDto): Promise<UserResponseDto> {

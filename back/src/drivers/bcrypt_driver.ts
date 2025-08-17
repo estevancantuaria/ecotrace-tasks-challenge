@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import * as bcrypt from 'bcrypt';
+import { IHashService } from "./interfaces/hash_service_interface";
 
 @Injectable()
-export class BcryptDriver {
+export class BcryptDriver implements IHashService {
   async hash(password: string) {
     return await bcrypt.hash(password, 10);
   }
